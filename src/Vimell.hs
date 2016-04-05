@@ -3,18 +3,17 @@
 module Vimell where
 
 import Control.Monad.Writer
-import qualified Data.Text as T
+import qualified Data.Text.Lazy as T
+import qualified Data.Text.Format as TF
 
-type VimL = Writer T.Text
+type WriteVimL = Writer T.Text
 
-echo :: T.Text -> VimL ()
+echo :: T.Text -> WriteVimL ()
 echo text =
-    -- TODO use text-format package for formatting VimL strings
-    -- http://hackage.haskell.org/package/text-format
-    let viml = T.append "echo \"" $ T.append text "\"\n"
+    let viml = TF.format "echo \"{}\"\n" $ TF.Only text
     in writer ((), viml)
 
-helloVimL :: VimL ()
+helloVimL :: WriteVimL ()
 helloVimL = do
     echo "Hello, VimL!"
     echo "Hello, Vimell!"
