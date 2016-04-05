@@ -1,6 +1,9 @@
 module Main where
 
-import Data.String.Strip
+import Control.Monad.Writer
+import Vimell
+import qualified Data.Text.IO as TIO
 
 main :: IO ()
-main = interact strip
+main =
+    TIO.putStr $ execWriter helloVimL
