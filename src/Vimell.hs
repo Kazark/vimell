@@ -8,12 +8,24 @@ import qualified Data.Text.Format as TF
 
 type WriteVimL = Writer T.Text
 
-echo :: T.Text -> WriteVimL ()
-echo text =
-    let viml = TF.format "echo \"{}\"\n" $ TF.Only text
+class Textable a where
+    toText :: a -> T.Text
+
+instance Textable T.Text where
+    toText text = text
+
+data Expression a =
+    Literal a
+
+echo :: Textable a => Expression a -> WriteVimL ()
+echo (Literal text) =
+    let viml = TF.format "echo \"{}\"\n" $ TF.Only $ toText text
     in writer ((), viml)
+
+echoL :: T.Text -> WriteVimL()
+echoL = echo . Literal
 
 helloVimL :: WriteVimL ()
 helloVimL = do
-    echo "Hello, VimL!"
-    echo "Hello, Vimell!"
+    echoL "Hello, VimL!"
+    echoL "Hello, Vimell!"
